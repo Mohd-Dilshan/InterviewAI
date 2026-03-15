@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>InterviewAI</title>
+</head>
+
+<body>
+
+<h2>InterviewAI - Mock Interview</h2>
+
+<input type="text" id="role" placeholder="Enter Job Role">
+<button onclick="startInterview()">Start Interview</button>
+
+<h3 id="question"></h3>
+
+<textarea id="answer" placeholder="Type your answer"></textarea>
+<br><br>
+
+<button onclick="submitAnswer()">Submit Answer</button>
+
+<h3>Feedback</h3>
+<ul id="feedback"></ul>
+
+<script>
+
+async function startInterview(){
+
+    const role = document.getElementById("role").value
+
+    const res = await fetch("/start_interview",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({role:role})
+    })
+
+    const data = await res.json()
+
+    document.getElementById("question").innerText = data.questions[0]
+}
+
+async function submitAnswer(){
+
+    const answer = document.getElementById("answer").value
+
+    const res = await fetch("/analyze",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({answer:answer})
+    })
+
+    const data = await res.json()
+
+    const feedbackList = document.getElementById("feedback")
+    feedbackList.innerHTML = ""
+
+    data.feedback.forEach(item=>{
+        const li = document.createElement("li")
+        li.innerText = item
+        feedbackList.appendChild(li)
+    })
+}
+
+</script>
+
+</body>
+</html>
